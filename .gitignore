@@ -1,0 +1,10 @@
+# NPM
+/node_modules
+# TypeScript
+/dist
+# Configuration files
+**/configs/*.json
+!**/configs/*-prod.json
+# Custom Ignores
+*.log
+*.sh

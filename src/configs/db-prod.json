@@ -1,0 +1,26 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "properties": {
+    "host": {
+      "description": "Database host URI",
+      "default": "localhost",
+      "type": "string"
+    },
+    "password": {
+      "description": "Database password",
+      "default": "",
+      "type": "string"
+    },
+    "database": {
+      "description": "Database name",
+      "default": "",
+      "type": "string"
+    },
+    "port": {
+      "description": "Database port",
+      "default": 3306,
+      "type": "integer"
+    }
+  },
+  "required": ["host", "password", "database", "port"]
+}
