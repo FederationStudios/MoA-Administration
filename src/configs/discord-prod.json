@@ -30,5 +30,5 @@
       "required": ["logs"]
     }
   },
-  "required": ["bot", "discord"]
+  "required": ["bot", "channels"]
 }

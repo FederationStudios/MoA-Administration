@@ -5,7 +5,7 @@
       "description": "API key for the Instatus account (https://instatus.com/app/developer)",
       "type": "string"
     },
-    "page": {
+    "pageId": {
       "description": "Page ID to update",
       "type": "string"
     },
@@ -14,5 +14,5 @@
       "type": "string"
     }
   },
-  "required": ["apiKey", "page", "metricId"]
+  "required": ["apiKey", "pageId", "metricId"]
 }

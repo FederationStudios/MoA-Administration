@@ -17,6 +17,12 @@ export interface CustomClient<Ready extends boolean = boolean> extends Client {
   /** @desc Logging ({@link Ready} determines type: true is {@link Logger}, false is {@link Console}) */
   logs?: Ready extends true ? Logger : Console;
 }
+export interface SettingsJSON {
+  groups: {
+    allies: number[];
+    enemies: number[];
+  };
+}
 // Various types of file that will be imported
 export interface CommandFile {
   name?: string;

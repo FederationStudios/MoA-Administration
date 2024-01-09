@@ -1,6 +1,8 @@
 //#region Packages
 import { Client, Collection, IntentsBitField } from 'discord.js';
 import { CustomClient } from './typings/Extensions.js';
+import { default as config } from './configs/discord.json' assert { type: 'json' };
+const { bot } = config;
 // Log developer mode
 if (process.env.NODE_ENV === 'development') console.debug('Starting in development mode');
 //#endregion
@@ -31,6 +33,7 @@ client.commands = new Collection();
 //#endregion
 //#region Discord events
 client.on('ready', () => {
+  client.ready = true;
   client.logs.info(`Logged in as ${client.user.tag}!`);
   // Run all ready functions
   Array.from(client.functions.keys())
@@ -42,5 +45,5 @@ client.on('interactionCreate', async (interaction) => {
   client.functions.get('events_interactionCreate_main').execute(client, interaction);
 });
 
-client.login(process.env.DCtoken);
+client.login(bot.token);
 //#endregion
