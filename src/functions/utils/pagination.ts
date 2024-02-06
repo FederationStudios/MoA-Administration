@@ -31,7 +31,7 @@ export async function execute(
   const selectorRow: ActionRowBuilder<StringSelectMenuBuilder> = new ActionRowBuilder({
     components: [
       new StringSelectMenuBuilder({
-        customId: 'profile-category',
+        customId: 'category',
         placeholder: 'Select a category to review',
         options,
         min_values: 1,

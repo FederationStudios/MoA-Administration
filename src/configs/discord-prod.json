@@ -15,6 +15,14 @@
         "token": {
           "description": "The token of the bot (DO NOT SHARE THIS!)",
           "type": "string"
+        },
+        "mainServer": {
+          "description": "Server ID that contains Rowifi api key",
+          "type": "string"
+        },
+        "rowifiApi": {
+          "description": "The token for Rowifi API",
+          "type": "string"
         }
       },
       "required": ["applicationId", "guildId", "token"]
@@ -25,9 +33,17 @@
         "logs": {
           "description": "The channel ID for general logs",
           "type": "string"
+        },
+        "patrols": {
+          "description": "The channel ID for patrol logs",
+          "type": "string"
+        },
+        "image": {
+          "description": "The channel ID for image logs",
+          "type": "string"
         }
       },
-      "required": ["logs"]
+      "required": ["logs", "patrols", "image"]
     }
   },
   "required": ["bot", "channels"]

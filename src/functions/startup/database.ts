@@ -22,7 +22,7 @@ export async function execute(client: CustomClient, _ready: boolean): Promise<vo
     client.logs.warn({ err }, `F | ✘ Failed to create database connection`);
   }
   // Add Sequelize
-  client.models = sequelize.models;
+  client.models = sequelize.models as ReturnType<typeof loader.initModels>;
   client.sequelize = sequelize;
   return;
 }

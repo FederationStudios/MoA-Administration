@@ -9,8 +9,9 @@ import {
   InteractionEditReplyOptions,
   InteractionType
 } from 'discord.js';
-import { default as disc } from './configs/discord.json' assert { type: 'json' };
+import { default as config } from './configs/discord.json' assert { type: 'json' };
 import { CustomClient } from './typings/Extensions.js';
+const { bot } = config;
 
 //#region Enums
 enum ResultMessage {
@@ -41,7 +42,7 @@ enum ResultType {
  * @example toConsole(`Hello, World!`, new Error().stack, client);
  */
 export async function toConsole(message: string, source: string, client: CustomClient): Promise<void> {
-  const channel = await client.channels.fetch(disc.channels.logs).catch(() => null);
+  const channel = await client.channels.fetch(config.channels.logs).catch(() => null);
   if (source.split('\n').length < 2)
     return console.error('[ERR] toConsole called but Error.stack was not used\n> Source: ' + source);
   source = /(?:[A-Za-z0-9._]+:[0-9]+:[0-9]+)/.exec(source)![0];
@@ -108,25 +109,6 @@ export async function interactionEmbed(
   return;
 }
 
-export function parseTime(time: string): number {
-  let duration = 0;
-  if (!time.match(/[1-9]{1,3}[dhms]/g)) return NaN;
-
-  for (const period of time.match(/[1-9]{1,3}[dhms]/g)!) {
-    const [amount, unit] = period.match(/^(\d+)([dhms])$/)!.slice(1);
-    duration +=
-      unit === 'd'
-        ? Number(amount) * 24 * 60 * 60
-        : unit === 'h'
-        ? Number(amount) * 60 * 60
-        : unit === 'm'
-        ? Number(amount) * 60
-        : Number(amount);
-  }
-
-  return duration;
-}
-
 export function getEnumKey(enumObj: object, value: number): string | undefined {
   for (const key in enumObj) {
     if (Object.prototype.hasOwnProperty.call(enumObj, key) && enumObj[key] === (value as number)) {
@@ -134,6 +116,40 @@ export function getEnumKey(enumObj: object, value: number): string | undefined {
     }
   }
   return undefined;
+}
+
+/**
+ * @async
+ */
+export async function getRowifi(
+  user: string,
+  client: CustomClient
+): Promise<{ success: false; error: string } | { success: true; roblox: number; username: string }> {
+  const discord = await client.users.fetch(user).catch(() => false);
+  if (typeof discord === 'boolean') return { success: false, error: 'Invalid Discord user ID' };
+  // Fetch their Roblox ID from Rowifi
+  const userData = await fetch(`https://api.rowifi.xyz/v2/guilds/${bot.mainServer}/members/${user}`, {
+    headers: { Authorization: `Bot ${bot.rowifiApi}` }
+  }).then((r: Response) => {
+    // If response is not OK, return the error
+    if (!r.ok) return { success: false, error: `Rowifi returned status code \`${r.status}\`` };
+    // Return the JSON
+    return r.json();
+  });
+  // If success is present, return an error
+  if (userData.success !== undefined)
+    return {
+      success: false,
+      error: 'Rowifi failed to return any data! Please check you are signed in with Rowifi'
+    };
+
+  // Fetch their Roblox username from the Roblox API
+  const roblox = await fetch(`https://users.roblox.com/v1/users/${userData.roblox_id}`).then((r: Response) => r.json());
+
+  // If the Roblox API returns an error, return the error
+  if (roblox.errors) return { success: false, error: `\`${roblox.errors[0].message}\`` };
+  // Return their roblox ID and username
+  return { success: true, roblox: userData.roblox_id, username: roblox.name };
 }
 
 export async function paginationRow(

@@ -8,16 +8,10 @@ export const data = new SlashCommandBuilder()
     return opt
       .setName('setting')
       .setDescription('The setting to change')
-      .setChoices(
-        {
-          name: 'Add Enemy Group',
-          value: 'addEnemy'
-        },
-        {
-          name: 'Remove Enemy Group',
-          value: 'removeEnemy'
-        }
-      )
+      .setChoices({
+        name: 'Manage Groups',
+        value: 'manageGroups'
+      })
       .setRequired(true);
   })
   .setDefaultMemberPermissions(PermissionFlagsBits.ManageRoles);

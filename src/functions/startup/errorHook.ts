@@ -9,7 +9,7 @@ export async function execute(client: CustomClient, ready: boolean): Promise<voi
     toConsole(`Uncaught exception: ${err}\n` + `Exception origin: ${origin}`, new Error().stack, client);
   });
   process.on('unhandledRejection', async (reason, promise) => {
-    if (!ready) {
+    if (!client.ready) {
       console.warn('Exiting due to a [unhandledRejection] during start up');
       console.error(reason, promise);
       return process.exit(15);

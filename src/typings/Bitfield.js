@@ -116,7 +116,8 @@ export class BitField {
   serialize(...hasParams) {
     const serialized = {};
     for (const [flag, bit] of Object.entries(this.constructor.Flags)) {
-      if (isNaN(flag)) serialized[flag] = this.has(bit, ...hasParams);
+      // deepcode ignore WrongNumberOfArguments: Implementations may specify hasParams
+      if (Number.isNaN(flag)) serialized[flag] = this.has(bit, ...hasParams);
     }
     return serialized;
   }
@@ -140,7 +141,8 @@ export class BitField {
 
   *[Symbol.iterator](...hasParams) {
     for (const bitName of Object.keys(this.constructor.Flags)) {
-      if (isNaN(bitName) && this.has(bitName, ...hasParams)) yield bitName;
+      // deepcode ignore WrongNumberOfArguments: Implementations may specify hasParams
+      if (Number.isNaN(bitName) && this.has(bitName, ...hasParams)) yield bitName;
     }
   }
 
@@ -162,9 +164,9 @@ export class BitField {
     const { DefaultBit } = this;
     if (typeof DefaultBit === typeof bit && bit >= DefaultBit) return bit;
     if (bit instanceof BitField) return bit.bitfield;
-    if (Array.isArray(bit)) return bit.map((p) => this.resolve(p)).reduce((prev, p) => prev | p, DefaultBit);
+    if (Array.isArray(bit)) return bit.map((p) => BitField.resolve(p)).reduce((prev, p) => prev | p, DefaultBit);
     if (typeof bit === 'string') {
-      if (!isNaN(bit)) return typeof DefaultBit === 'bigint' ? BigInt(bit) : Number(bit);
+      if (!Number.isNaN(bit)) return typeof DefaultBit === 'bigint' ? BigInt(bit) : Number(bit);
       if (this.Flags[bit] !== undefined) return this.Flags[bit];
     }
     throw new DiscordjsRangeError(DiscordjsErrorCodes.BitFieldInvalid, bit);
