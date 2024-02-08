@@ -19,16 +19,16 @@ export async function execute({ client, interaction, options }: CmdFileArgs): Pr
   }
   // Check if it has been 19 minutes since last proof logged
   const lastProof = patrol.proofs[patrol.proofs.length - 1] || { createdAt: patrol.start };
-  // if (lastProof.createdAt.getTime() + 19 * 60 * 1000 > Date.now()) {
-  //   interaction.editReply({
-  //     content: 'You have already logged proof in the last 20 minutes! Come back later or end the patrol'
-  //   });
-  //   return;
-  // }
+  if (lastProof.createdAt.getTime() + 19 * 60 * 1000 > Date.now()) {
+    interaction.editReply({
+      content: 'You have already logged proof in the last 20 minutes! Come back later or end the patrol'
+    });
+    return;
+  }
   // If it has been more than 23 minutes, forcefully end the patrol using last proof as end time
   if (lastProof.createdAt.getTime() + 23 * 60 * 1000 < Date.now()) {
     interaction.editReply({ content: 'You failed to log your proof in time. Your patrol has been forcefully ended' });
-    await client.functions.get('utils_endPatrol').execute(client, patrol.userId, rowifi.roblox);
+    await client.functions.get('utils_endPatrol').execute(client, rowifi.roblox, patrol.userId);
     return;
   }
   // Ask for proof

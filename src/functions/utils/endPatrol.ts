@@ -1,14 +1,16 @@
 import { Attachment } from 'discord.js';
 import { CustomClient } from '../../typings/Extensions.js';
 import { default as config } from '../../configs/discord.json' assert { 'type': 'json' };
+import { RobloxUserData } from '../../typings/RobloxTypes.js';
 
 export async function execute(client: CustomClient, roblox: number, discord: string): Promise<[boolean, string]> {
   // Find the patrol
   const patrol = await client.models.patrol.findOne({
-    where: { userId: discord, roblox, end: null },
+    where: { userId: discord, end: null },
     include: { model: client.models.proofs, as: 'proofs' }
   });
-  if (!patrol) return [false, 'No patrol found'];
+  console.warn(patrol);
+  if (!patrol) return [false, 'No patrol found!'];
   // If it has been more than 23 minutes, forcefully end the patrol using last proof as end time
   const lastProof = patrol.proofs[patrol.proofs.length - 1] || { createdAt: patrol.start };
   if (lastProof.createdAt.getTime() + 23 * 60 * 1000 < Date.now()) {
@@ -29,6 +31,7 @@ export async function execute(client: CustomClient, roblox: number, discord: str
       return message.attachments.first();
     })
     .filter((p) => p !== undefined) as Promise<Attachment>[];
+  console.warn(patrol);
   if (proofs.length !== patrol.proofs.length) return [false, 'Not all proof could be found'];
   // Reduce to 10 attachments per message
   const proofForMessages: Attachment[][] = [];
@@ -45,11 +48,13 @@ export async function execute(client: CustomClient, roblox: number, discord: str
   // The loop will in theory, never push it to the array
   // So we'll do it here
   if (list.length > 0) proofForMessages.push(list);
+  // Grab Roblox
+  const userData: RobloxUserData = await fetch(`https://users.roblox.com/v1/users/${roblox}`).then((r) => r.json());
   // Send the proof
   const c = await client.channels.fetch(config.channels.logs);
   if (!c.isTextBased()) return [false, 'Could not find logs channel'];
   c.send({
-    content: `A patrol has ended for <@${discord}>`,
+    content: `<@${discord}> (${userData.name}) ended a patrol!`,
     embeds: [
       {
         title: 'Patrol Log',

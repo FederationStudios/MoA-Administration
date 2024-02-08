@@ -21,7 +21,7 @@ export async function execute({ client, interaction, options }: CmdFileArgs): Pr
   const lastProof = patrol.proofs[patrol.proofs.length - 1] || { createdAt: patrol.start };
   if (lastProof.createdAt.getTime() + 23 * 60 * 1000 < Date.now()) {
     interaction.editReply({ content: 'You failed to log your proof in time. Your patrol has been forcefully ended' });
-    await client.functions.get('utils_endPatrol').execute(client, patrol.userId, rowifi.roblox);
+    await client.functions.get('utils_endPatrol').execute(client, rowifi.roblox, patrol.userId);
     return;
   }
   // Ask for proof
